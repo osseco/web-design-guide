@@ -1,0 +1,10 @@
+packages:
+  - templates
+  - site
+
+# No catalog here on purpose: templates/package.json must work once copied out
+# of this repository, so it pins versions itself. site/src/versions.test.ts
+# fails when site and templates disagree on a shared dependency.
+
+allowBuilds:
+  fsevents: true

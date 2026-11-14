@@ -1,0 +1,3 @@
+/* The site uses the template tokens unchanged; it adds nothing of its own. */
+@import "../../templates/src/index.css";
+@source "../../templates/src";

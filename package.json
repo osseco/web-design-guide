@@ -1,0 +1,19 @@
+{
+  "name": "osseco-web-design-guide",
+  "private": true,
+  "packageManager": "pnpm@12.9.1",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "22"
+    }
+  },
+  "scripts": {
+    "dev": "pnpm --filter osseco-web-design-site dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "format": "pnpm -r run format",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r test"
+  }
+}

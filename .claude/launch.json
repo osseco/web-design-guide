@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site-preview",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["PAGES_BASE=/web-design-guide/", "sfw", "pnpm", "--filter", "osseco-web-design-site", "exec", "vite", "preview", "--port", "4174"],
+      "port": 4174
+    }
+  ]
+}

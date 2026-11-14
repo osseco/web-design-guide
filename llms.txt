@@ -1,0 +1,32 @@
+# osseco web design guide
+
+> How every osseco web frontend (app UIs and GitHub Pages sites) is built and styled: Vite, React, TypeScript, Tailwind 4 tokens with light and dark themes, shared components copied from templates/, and a GitHub Pages workflow. Each doc starts with MUST/SHOULD rules.
+
+Agents should read AGENTS.md first, then copy files from templates/ rather than recreating them. Source: https://github.com/osseco/web-design-guide
+
+## Guide
+
+- [Principles](https://osseco.github.io/web-design-guide/docs/principles.md): why the guide exists, what must match across projects, visual character
+- [Stack](https://osseco.github.io/web-design-guide/docs/stack.md): libraries, versions, scripts, sfw, Biome and TypeScript settings
+- [Project structure](https://osseco.github.io/web-design-guide/docs/project-structure.md): folder layout, naming, starting a project, Pages vs embedded apps
+- [Tokens](https://osseco.github.io/web-design-guide/docs/tokens.md): every color, the status palette, radius and fonts, light and dark values
+- [Theming](https://osseco.github.io/web-design-guide/docs/theming.md): light/dark mechanism, toggle, no-flash script, contrast
+- [Typography](https://osseco.github.io/web-design-guide/docs/typography.md): type scale, prose-osseco, writing style
+- [Layout](https://osseco.github.io/web-design-guide/docs/layout.md): AppShell, widths, page types, spacing, breakpoints
+- [Components](https://osseco.github.io/web-design-guide/docs/components.md): API and accessibility contract of each shared component
+- [Patterns](https://osseco.github.io/web-design-guide/docs/patterns.md): status badges, card grids, numbered steps, tables, empty/loading/error
+- [Accessibility](https://osseco.github.io/web-design-guide/docs/accessibility.md): WCAG AA baseline, keyboard, ARIA patterns, contrast targets
+- [GitHub Pages](https://osseco.github.io/web-design-guide/docs/github-pages.md): PAGES_BASE, SPA fallback, deploy workflow, content for agents
+- [Security](https://osseco.github.io/web-design-guide/docs/security.md): HTML rendering, supply chain, workflow hardening
+- [Checklist](https://osseco.github.io/web-design-guide/docs/checklist.md): pass/fail review list before shipping
+
+## Templates
+
+- [templates/](https://github.com/osseco/web-design-guide/tree/main/templates): copy-in starter app with tokens, components, configs and Pages workflow
+- [templates/src/index.css](https://raw.githubusercontent.com/osseco/web-design-guide/main/templates/src/index.css): the token definitions (light and dark)
+- [templates/src/components](https://github.com/osseco/web-design-guide/tree/main/templates/src/components): shared components
+
+## Optional
+
+- [AGENTS.md](https://raw.githubusercontent.com/osseco/web-design-guide/main/AGENTS.md): rules for agents applying the guide or changing it
+- [Claude skill](https://raw.githubusercontent.com/osseco/web-design-guide/main/skill/osseco-web-design/SKILL.md): installable skill that applies the guide
