@@ -63,6 +63,22 @@ sfw pnpm build
 
 CI installs sfw with `osseco/setup-sfw-free`, pinned by full commit SHA.
 
+### Checks
+
+Run `pre-commit run --all-files` before staging a chunk. It runs Biome, typecheck, the tests, zizmor, actionlint and basic file checks.
+
+It needs these on PATH: `sfw`, `node` (22), `pnpm`, `zizmor`, `actionlint`, `pre-commit`.
+
+### GitHub Actions
+
+- `pr.yml` runs every check through reusable workflows (`check.yml`, `codeql.yml`, `zizmor.yml`, `actionlint.yml`, `socket.yml`). `Merge gate` is the single required status check: every pull request job must be in its `needs`, and none may have a `paths:` filter or a job-level `if`, because a skipped job fails the gate.
+- `pages.yml` deploys from `main` after the same `check.yml`.
+- Pin every action to a full commit SHA with a version comment, in this repository's workflows and in `templates/.github/workflows` alike. Call our own reusable workflows with `$/`.
+- Start each workflow with `permissions: {}`, and grant per job only what it needs.
+- Set `persist-credentials: false` on checkout.
+- Pass `${{ }}` values to `run:` through `env:`, never inline.
+- zizmor and actionlint must report no findings.
+
 ### Branches
 
 Never change or commit directly on `main`. Before the first edit, check the current branch. If it is `main`, create a branch from `origin/main` (no `git fetch`), not from local `main`, and work there:

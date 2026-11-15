@@ -1,0 +1,5 @@
+name: web-design-guide CodeQL configuration
+
+paths-ignore:
+  - "**/dist"
+  - "**/node_modules"

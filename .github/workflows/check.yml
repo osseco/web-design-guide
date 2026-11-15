@@ -1,0 +1,45 @@
+name: Check
+
+# Everything a change must pass. Called by pr.yml and pages.yml.
+
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  test:
+    name: Lint, typecheck, test and build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+        with:
+          install: false
+          cache: true
+      - uses: osseco/setup-sfw-free@e1cbeae80920eb20b289196bb420d5f45a45ead1 # v1.15.6-0.2.0
+        with:
+          cache: ${{ github.ref == 'refs/heads/main' && 'true' || 'restore' }}
+          job-summary: errors
+      - run: sfw pnpm audit
+      - run: sfw pnpm install --frozen-lockfile
+      - run: sfw pnpm lint
+      - run: sfw pnpm typecheck
+      - run: sfw pnpm test
+      # The starter must build on its own, exactly as projects copy it.
+      - run: sfw pnpm --filter osseco-web-template build
+      - run: sfw pnpm --filter osseco-web-design-site build
+
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: low
