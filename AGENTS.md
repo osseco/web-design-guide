@@ -48,7 +48,10 @@ The guide covers web app UIs and GitHub Pages sites in the osseco organization.
 - `site/` imports `templates/src` through the `@template` alias and renders `docs/*.md`. A design change goes in `templates/` and `docs/` **in the same commit**.
 - `templates/package.json` pins its own versions (no catalog) so it works once copied out. `site/src/versions.test.ts` fails when site and templates disagree on a shared dependency.
 - When you add, rename or remove a doc, update `llms.txt`, `README.md`, the table above, and `skill/osseco-web-design/SKILL.md`. The site picks up docs automatically.
-- Commands, from the root, always with `sfw`:
+
+### Socket Firewall
+
+Prefix every `pnpm` command with `sfw` ([Socket Firewall Free](https://docs.socket.dev/docs/socket-firewall-free)). From the root:
 
 ```bash
 sfw pnpm install --frozen-lockfile
@@ -58,5 +61,36 @@ sfw pnpm test
 sfw pnpm build
 ```
 
-- Never commit `dist/`. Never commit on `main`: branch as `type/short_description`.
-- Commits: Conventional Commits, `type(scope): imperative subject`. Scopes: `docs`, `templates`, `site`, `skill`, `ci`.
+CI installs sfw with `osseco/setup-sfw-free`, pinned by full commit SHA.
+
+### Branches
+
+Never change or commit directly on `main`. Before the first edit, check the current branch. If it is `main`, create a branch from `origin/main` (no `git fetch`), not from local `main`, and work there:
+
+```bash
+git switch --no-track -c fix/short_description origin/main
+```
+
+Name it `type/short_description`, with the same types as commits.
+
+### Commits
+
+Agents never commit. The maintainer reviews and signs every commit.
+
+- Never run `git commit`, `git tag`, `git push`, or anything that rewrites history (`rebase`, `reset --hard`, `commit --amend`, force pushes).
+- Work in reviewable chunks. At the end of each chunk, stage exactly that chunk's files with explicit paths (`git add <path>…`, never `git add -A` or `git add .`), show `git diff --cached --stat`, and propose a commit message. Staged means "commit this". Then wait until the maintainer has committed before starting the next chunk. On requested changes, edit and re-stage.
+- Staging is the only git write an agent does.
+- Never stage `dist/`.
+- Pull requests are squash-merged and the PR title becomes the commit on `main`, so PR titles follow the same format.
+
+Messages use [Conventional Commits](https://www.conventionalcommits.org/):
+
+```text
+type(scope): imperative subject
+```
+
+- Types: `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, `chore`.
+- Scopes when useful: `docs`, `templates`, `site`, `skill`, `ci`.
+- The subject is lowercase imperative, with no trailing period.
+- Breaking changes (to a rule, token or template API projects depend on) use `!` or a `BREAKING CHANGE:` footer.
+- The `ci` type and scope are only for this repository's own workflow. Changes to `templates/.github/` use the `templates` scope.
