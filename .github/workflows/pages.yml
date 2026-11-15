@@ -1,41 +1,23 @@
+# Publishes site/ to GitHub Pages. Settings → Pages → Source: GitHub Actions.
+# Pull requests run the same checks through pr.yml.
 name: Pages
 
 on:
   push:
     branches: [main]
-  pull_request:
   workflow_dispatch:
 
 permissions: {}
 
 concurrency:
-  group: pages-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    uses: $/.github/workflows/check.yml
     permissions:
       contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
-        with:
-          install: false
-          cache: true
-      - uses: osseco/setup-sfw-free@e1cbeae80920eb20b289196bb420d5f45a45ead1 # v1.15.6-0.2.0
-        with:
-          cache: ${{ github.ref == 'refs/heads/main' && 'true' || 'restore' }}
-          job-summary: errors
-      - run: sfw pnpm audit
-      - run: sfw pnpm install --frozen-lockfile
-      - run: sfw pnpm lint
-      - run: sfw pnpm typecheck
-      - run: sfw pnpm test
-      # The starter must build on its own, exactly as projects copy it.
-      - run: sfw pnpm --filter osseco-web-template build
 
   build:
     needs: [check]

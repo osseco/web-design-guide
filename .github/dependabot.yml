@@ -1,0 +1,41 @@
+version: 2
+updates:
+  # Reads pnpm-lock.yaml for both workspace packages (templates/ and site/).
+  # Runtime dependencies are grouped apart from build and lint tools.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      production:
+        dependency-type: production
+      development:
+        dependency-type: development
+
+  # This repository's workflows and the starter's (templates/.github/workflows).
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /templates
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  # The Socket CLI used by socket.yml (pyproject.toml + uv.lock).
+  - package-ecosystem: uv
+    directory: /.github/socket
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      socket-cli:
+        patterns:
+          - "*"

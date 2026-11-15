@@ -1,0 +1,70 @@
+name: PR
+
+on:
+  pull_request:
+
+permissions: {}
+
+concurrency:
+  group: pr-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    uses: $/.github/workflows/check.yml
+    permissions:
+      contents: read
+
+  codeql:
+    uses: $/.github/workflows/codeql.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+      packages: read
+
+  zizmor:
+    uses: $/.github/workflows/zizmor.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+  actionlint:
+    uses: $/.github/workflows/actionlint.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+  socket:
+    uses: $/.github/workflows/socket.yml
+    secrets:
+      SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}
+    permissions:
+      issues: write
+      contents: read
+      pull-requests: write
+
+  # Always runs, so a failure shows as a failed check and not a skipped one.
+  # This is the single required status check for main.
+  merge-gate:
+    name: Merge gate
+    needs: [check, codeql, zizmor, actionlint, socket]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Ok to merge
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          set -euo pipefail
+          echo "results: $RESULTS"
+          case " $RESULTS " in
+            *" failure "* | *" cancelled "* | *" skipped "*)
+              echo "a required job failed, was cancelled or was skipped" >&2
+              exit 1
+              ;;
+          esac
+          echo "OK to merge"

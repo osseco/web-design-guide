@@ -1,0 +1,8 @@
+paths:
+  "**/*.{yml,yaml}":
+    ignore:
+      # `uses: $/...` calls a workflow of the same repository at the same ref.
+      # It works on github.com and is intentional; this actionlint release does
+      # not know the form.
+      - 'is not following the format "owner/repo/path/to/workflow\.yml@ref"'
+      - 'specifying action "\$/'

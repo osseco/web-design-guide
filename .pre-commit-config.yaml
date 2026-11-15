@@ -1,0 +1,44 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+      - id: check-yaml
+        # pnpm 12 writes pnpm-lock.yaml as several YAML documents.
+        args: [--allow-multiple-documents]
+      - id: check-merge-conflict
+
+  # Tools are expected on PATH (see AGENTS.md).
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome format and lint
+        entry: pnpm lint
+        language: system
+        pass_filenames: false
+      - id: typecheck
+        name: typecheck
+        entry: pnpm typecheck
+        language: system
+        files: \.(ts|tsx)$|tsconfig\.json$
+        pass_filenames: false
+      - id: pnpm-test
+        name: pnpm test
+        entry: pnpm test
+        language: system
+        files: \.(ts|tsx|css|md)$|^llms\.txt$|package\.json$
+        pass_filenames: false
+      - id: zizmor
+        name: zizmor
+        entry: zizmor --offline .
+        language: system
+        files: (^|/)\.github/(workflows/|dependabot\.yml$)
+        pass_filenames: false
+      - id: actionlint
+        name: actionlint
+        entry: bash -c 'actionlint -config-file .github/actionlint.yaml .github/workflows/*.yml templates/.github/workflows/*.yml'
+        language: system
+        files: (^|/)\.github/(workflows/|actionlint\.yaml$)
+        pass_filenames: false
