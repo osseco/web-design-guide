@@ -45,6 +45,8 @@ jobs:
       issues: write
       contents: read
       pull-requests: write
+      security-events: write
+      actions: read
 
   # Always runs, so a failure shows as a failed check and not a skipped one.
   # This is the single required status check for main.

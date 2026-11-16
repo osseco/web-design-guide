@@ -1,6 +1,6 @@
 name: Check
 
-# Everything a change must pass. Called by pr.yml and pages.yml.
+# Everything a change must pass. Called by pr.yml and main.yml.
 
 on:
   workflow_call:
