@@ -39,10 +39,12 @@ jobs:
         env:
           SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}
           GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number || 0 }}
+          # Not PR_NUMBER: socketcli falls back to that env var when
+          # --pr-number is 0, and "0" turns a push into a PR diff.
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number || 0 }}
         run: |
           uv run --locked --offline --project .github/socket socketcli \
             --target-path "$GITHUB_WORKSPACE" \
             --scm github \
-            --pr-number "$PR_NUMBER" \
+            --pr-number "$PULL_REQUEST_NUMBER" \
             --strict-blocking
