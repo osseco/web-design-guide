@@ -72,7 +72,7 @@ It needs these on PATH: `sfw`, `node` (22), `pnpm`, `zizmor`, `actionlint`, `pre
 ### GitHub Actions
 
 - `pr.yml` runs every check through reusable workflows (`check.yml`, `codeql.yml`, `zizmor.yml`, `actionlint.yml`, `socket.yml`). `Merge gate` is the single required status check: every pull request job must be in its `needs`, and none may have a `paths:` filter or a job-level `if`, because a skipped job fails the gate.
-- `pages.yml` deploys from `main` after the same `check.yml`.
+- `main.yml` runs the same checks on every push to `main` and deploys Pages once they all pass.
 - Pin every action to a full commit SHA with a version comment, in this repository's workflows and in `templates/.github/workflows` alike. Call our own reusable workflows with `$/`.
 - Start each workflow with `permissions: {}`, and grant per job only what it needs.
 - Set `persist-credentials: false` on checkout.

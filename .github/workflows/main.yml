@@ -1,6 +1,6 @@
-# Publishes site/ to GitHub Pages. Settings → Pages → Source: GitHub Actions.
-# Pull requests run the same checks through pr.yml.
-name: Pages
+# Runs every pr.yml check on main, then publishes site/ to GitHub Pages once
+# they all pass. Settings → Pages → Source: GitHub Actions.
+name: Main
 
 on:
   push:
@@ -19,8 +19,41 @@ jobs:
     permissions:
       contents: read
 
+  codeql:
+    uses: $/.github/workflows/codeql.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+      packages: read
+
+  zizmor:
+    uses: $/.github/workflows/zizmor.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+  actionlint:
+    uses: $/.github/workflows/actionlint.yml
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
+
+  socket:
+    uses: $/.github/workflows/socket.yml
+    secrets:
+      SOCKET_SECURITY_API_KEY: ${{ secrets.SOCKET_SECURITY_API_KEY }}
+    permissions:
+      issues: write
+      contents: read
+      pull-requests: write
+      security-events: write
+      actions: read
+
   build:
-    needs: [check]
+    needs: [check, codeql, zizmor, actionlint, socket]
     runs-on: ubuntu-latest
     permissions:
       contents: read

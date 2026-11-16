@@ -18,6 +18,8 @@ jobs:
       issues: write
       contents: read
       pull-requests: write
+      security-events: write
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -42,9 +44,29 @@ jobs:
           # Not PR_NUMBER: socketcli falls back to that env var when
           # --pr-number is 0, and "0" turns a push into a PR diff.
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number || 0 }}
+          EVENT_NAME: ${{ github.event_name }}
+        # --scm github only knows pull_request and push; on schedule it exits
+        # 0 without scanning. Other events scan every manifest into SARIF.
+        # Code scanning closes alerts missing from the latest upload, so the
+        # SARIF must hold all of them: --strict-blocking adds existing alerts
+        # (--sarif-scope full needs --reach, which is Enterprise-only).
         run: |
-          uv run --locked --offline --project .github/socket socketcli \
-            --target-path "$GITHUB_WORKSPACE" \
-            --scm github \
-            --pr-number "$PULL_REQUEST_NUMBER" \
-            --strict-blocking
+          set -euo pipefail
+          args=(--target-path "$GITHUB_WORKSPACE" --strict-blocking)
+          if [ "$EVENT_NAME" = pull_request ]; then
+            args+=(--scm github --pr-number "$PULL_REQUEST_NUMBER")
+          else
+            args+=(--ignore-commit-files --sarif-file socket.sarif)
+            # Report-only: exit 0 even with blocking alerts.
+            if [ "$EVENT_NAME" = schedule ]; then
+              args+=(--disable-blocking)
+            fi
+          fi
+          uv run --locked --offline --project .github/socket socketcli "${args[@]}"
+      # PRs don't upload: GitHub doesn't show fixed alerts on PRs, and the PR
+      # comment already covers new ones.
+      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+        with:
+          sarif_file: socket.sarif
+          category: socket
